@@ -1,73 +1,133 @@
-# React + TypeScript + Vite
+# 🚗 Rentic – Customer PWA (Premium Car Rental Platform)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-performance, mobile-first Progressive Web App (PWA) that delivers a seamless and app-like car rental experience directly from the browser.
 
-Currently, two official plugins are available:
+Rentic enables users to discover premium vehicles, book rentals effortlessly, and manage trips with a smooth, responsive UI built for modern devices.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 📱 Mobile-First App Experience
+- App-shell architecture for instant loading  
+- Optimized 100dvh viewport handling (iOS + Android safe)  
+- Smooth scrolling and touch-friendly UI  
 
-## Expanding the ESLint configuration
+### 📡 Progressive Web App (PWA)
+- Offline-ready via Service Worker  
+- Installable ("Add to Home Screen")  
+- Fast caching & background updates  
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🔍 Smart Vehicle Discovery
+- Real-time search experience  
+- Brand-based filtering  
+- Horizontal scroll optimization  
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 📅 Booking & Trip Management
+- Easy booking flow  
+- Trip status tracking:
+  - Active  
+  - Completed  
+  - Cancelled  
+- Firebase Timestamp integration  
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 👤 Secure User Onboarding
+- Firebase Authentication  
+- Profile management  
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### ⚡ Performance Focused
+- Vite-powered lightning-fast dev environment  
+- TypeScript for type safety  
+- Optimized rendering  
+
+---
+
+
+## 🚀 Getting Started
+
+### ✅ Prerequisites
+
+- Node.js v24+  
+- npm 
+- Firebase Project  
+
+---
+
+### 📦 Installation
+
+```bash
+git clone https://github.com/nobinsj/rentic-pwa.git
+cd rentic-pwa
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 🔐 Environment Variables
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Create a `.env` file in the root:
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MSG_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
 ```
+
+---
+
+### ▶️ Run the App
+
+```bash
+npm run dev
+```
+
+---
+
+### 📦 Build for Production
+
+```bash
+npm run build
+```
+
+---
+
+## 📱 PWA Capabilities
+
+- Installable on mobile & desktop  
+- Offline support  
+- Service Worker caching  
+- Native-like experience  
+
+---
+
+## 🔥 Firebase Integration
+
+- Authentication (Login / Register)  
+- Firestore (Users, Cars, Bookings)  
+- Real-time updates  
+- Secure rules  
+
+---
+
+## 🎯 Future Enhancements
+
+- Payment Integration (Stripe / Razorpay)  
+- Location-based search (Maps)  
+- Push Notifications  
+- Vehicle availability calendar  
+
+---
+
+## 👨‍💻 Author
+
+**Nobin S Johns**  
+Frontend Engineer (React + TypeScript)
+
+---
+
+## 📄 License
+
+MIT License
