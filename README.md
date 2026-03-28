@@ -1,4 +1,4 @@
-# 🚗 Rentic – Customer PWA (Premium Car Rental Platform)
+# 🚗 Rentic – Customer PWA ( Car Rental Platform)
 
 A high-performance, mobile-first Progressive Web App (PWA) that delivers a seamless and app-like car rental experience directly from the browser.
 
