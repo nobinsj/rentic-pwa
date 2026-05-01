@@ -8,8 +8,12 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import api from "@/lib/axios";
+import { useQueryClient } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/services/endpoints";
 
 const Profile = () => {
+  const queryClient = useQueryClient();
   // Mock User Data - In production, this comes from your Auth Context
   const user = {
     fullName: "Nobin S Johns",
@@ -46,11 +50,11 @@ const Profile = () => {
     },
   ];
 
-  const handleLogout = () => {
-    // Firebase signOut logic here
-    console.log("Logging out...");
-  };
+  const handleLogout = async () => {
+    await api.post(API_ENDPOINTS.LOGOUT);
 
+    queryClient.setQueryData(["me"], null);
+  };
   return (
     <div className="space-y-8 pb-10">
       {/* Profile Header */}
