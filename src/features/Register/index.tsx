@@ -14,10 +14,14 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/axios";
+import { API_ENDPOINTS } from "@/services/endpoints";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -27,17 +31,34 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const handleRegisterMutation = useMutation({
+    mutationFn: (data: any) => api.post(API_ENDPOINTS.USER_REGISTER, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+      const expiry = Date.now() + 300 * 1000;
+      localStorage.setItem("otpExpiry", expiry.toString());
+      navigate("/");
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Register Error");
+    },
+  });
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
+    const data = {
+      fullName: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+      mobileNumber: formData.mobile,
+      licenseNumber: formData.licenseNumber,
+    };
 
-    setIsLoading(true);
-    // Firebase Auth logic will be injected here
-    console.log("Registering user:", formData);
-    setTimeout(() => setIsLoading(false), 2000);
+    handleRegisterMutation.mutate(data);
   };
 
   const goToLogin = () => {
@@ -185,7 +206,7 @@ const Register = () => {
               <Button
                 type="submit"
                 className="w-full py-7 text-lg shadow-xl shadow-blue-600/20"
-                loading={isLoading}
+                loading={handleRegisterMutation.isPending}
               >
                 Create Account <ArrowRight className="ml-2" size={20} />
               </Button>

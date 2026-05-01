@@ -4,26 +4,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Car } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/axios";
+import { API_ENDPOINTS } from "@/services/endpoints";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  const loginMutation = useMutation({
+    mutationFn: (data: any) => api.post(API_ENDPOINTS.USER_LOGIN, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+      const expiry = Date.now() + 300 * 1000;
+      localStorage.setItem("otpExpiry", expiry.toString());
+      navigate("/");
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Register Error");
+    },
+  });
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    // Simulated API Call
-    try {
-      console.log("Logging in with:", formData);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } finally {
-      setIsLoading(false);
-    }
+    loginMutation.mutate(formData);
   };
 
   return (
@@ -82,7 +92,11 @@ const Login = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full" loading={isLoading}>
+          <Button
+            type="submit"
+            className="w-full"
+            loading={loginMutation.isPending}
+          >
             Sign In
           </Button>
         </form>
