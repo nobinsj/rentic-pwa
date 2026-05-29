@@ -4,19 +4,12 @@ import type { BookingProps } from "@/types";
 
 export const BookingCard = ({ booking }: { booking: BookingProps }) => {
   const statusColors = {
-    Active: "text-blue-600 bg-blue-50 dark:bg-blue-900/20",
-    Completed: "text-green-600 bg-green-50 dark:bg-green-900/20",
-    Cancelled: "text-red-600 bg-red-50 dark:bg-red-900/20",
-  };
-
-  // Helper to format the Firebase Timestamp
-  const formatDate = (timestamp: any) => {
-    if (!timestamp || typeof timestamp.toDate !== "function") return "N/A";
-    const date = timestamp.toDate();
-    return new Intl.DateTimeFormat("en-IN", {
-      day: "numeric",
-      month: "short",
-    }).format(date);
+    REQUESTED: "text-blue-600 bg-blue-50 dark:bg-blue-900/20",
+    COMPLETED: "text-green-600 bg-green-50 dark:bg-green-900/20",
+    CANCELLED: "text-red-600 bg-red-50 dark:bg-red-900/20",
+    CONFIRMED: "",
+    ONGOING: "",
+    REJECTED: "",
   };
 
   return (
@@ -25,7 +18,7 @@ export const BookingCard = ({ booking }: { booking: BookingProps }) => {
         {/* Car Image Thumbnail */}
         <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-800">
           <img
-            src={booking.image}
+            src={booking.carImage}
             alt={booking.carName}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -36,7 +29,7 @@ export const BookingCard = ({ booking }: { booking: BookingProps }) => {
           <div className="flex items-start justify-between">
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                {booking.brand}
+                {booking.carName}
               </p>
               <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">
                 {booking.carName}
@@ -45,17 +38,20 @@ export const BookingCard = ({ booking }: { booking: BookingProps }) => {
             <span
               className={cn(
                 "rounded-lg px-2 py-1 text-[10px] font-bold uppercase",
-                statusColors[booking.status],
+                statusColors[booking.bookingStatus],
               )}
             >
-              {booking.status}
+              {booking.bookingStatus}
             </span>
           </div>
 
           <div className="flex items-center gap-3 text-gray-500">
             <div className="flex items-center gap-1.5 text-xs font-medium">
               <Calendar size={14} className="text-gray-400" />
-              <span>{formatDate(booking.startDate)}</span>
+              <span>
+                {booking.totalDays}
+                {" Days"}
+              </span>
             </div>
 
             <div className="h-1 w-1 rounded-full bg-gray-300 dark:bg-gray-700" />

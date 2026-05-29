@@ -10,6 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { Suspense } from "react";
 import VerifyEmail from "@/features/VerifyEmail";
 import VerifyEmailRoute from "./VerifyEmailRoute";
+import BookACar from "@/features/BookACar";
 
 export const routes: RouteObject[] = [
   {
@@ -65,6 +66,16 @@ export const routes: RouteObject[] = [
           <ProtectedRoute>
             <Suspense fallback={<div>Loading</div>}>
               <Profile />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/booking/:carId",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<div>Loading</div>}>
+              <BookACar />
             </Suspense>
           </ProtectedRoute>
         ),

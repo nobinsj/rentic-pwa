@@ -5,4 +5,7 @@ export const API_ENDPOINTS = {
   LOGOUT: "/v1/authenticated/end-user/logout",
   VERIFY_OTP: "/v1/authenticated/user/verify-otp",
   LIST_CARS: "/v1/authenticated/end-user/get-cars",
+  GET_CAR_DETAIL: "/v1/authenticated/end-user/get-car-detail/",
+  CREATE_BOOKING: "/v1/car/booking/create-booking",
+  GET_BOOKING: "/v1/car/booking/get-bookings",
 };
