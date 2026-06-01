@@ -6,12 +6,19 @@ interface CarProps {
   brand: string;
   fuelType: string;
   transmission: string;
-  pricePerDay: number;
+  pricePerDay: number | string;
   image: string;
   status: string;
+  id: string;
 }
 
-export const CarCard = ({ car }: { car: CarProps }) => {
+export const CarCard = ({
+  car,
+  onBookClick,
+}: {
+  car: CarProps;
+  onBookClick: any;
+}) => {
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-3 shadow-sm transition-all hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
       {/* Wishlist Button */}
@@ -59,7 +66,12 @@ export const CarCard = ({ car }: { car: CarProps }) => {
           </div>
         </div>
 
-        <Button className="w-full rounded-xl py-6 font-bold">Book Now</Button>
+        <Button
+          className="w-full rounded-xl py-6 font-bold"
+          onClick={() => onBookClick(car.id)}
+        >
+          Book Now
+        </Button>
       </div>
     </div>
   );

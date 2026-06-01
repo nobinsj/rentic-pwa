@@ -14,10 +14,14 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/axios";
+import { API_ENDPOINTS } from "@/services/endpoints";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -27,17 +31,34 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const handleRegisterMutation = useMutation({
+    mutationFn: (data: any) => api.post(API_ENDPOINTS.USER_REGISTER, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+      const expiry = Date.now() + 300 * 1000;
+      localStorage.setItem("otpExpiry", expiry.toString());
+      navigate("/");
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Register Error");
+    },
+  });
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
+    const data = {
+      fullName: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+      mobileNumber: formData.mobile,
+      licenseNumber: formData.licenseNumber,
+    };
 
-    setIsLoading(true);
-    // Firebase Auth logic will be injected here
-    console.log("Registering user:", formData);
-    setTimeout(() => setIsLoading(false), 2000);
+    handleRegisterMutation.mutate(data);
   };
 
   const goToLogin = () => {
@@ -45,7 +66,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-white dark:bg-gray-950">
+    <div className="h-screen bg-white dark:bg-gray-950 flex flex-col ">
       {/* Optional: Simple Top Navigation for PWA */}
       <div className="flex items-center justify-between px-6 py-4">
         <button
@@ -57,7 +78,7 @@ const Register = () => {
         <Car className="text-blue-600" size={24} />
       </div>
 
-      <div className="flex flex-1 flex-col items-center px-6 pb-12 pt-4">
+      <div className="flex flex-1 overflow-y-auto flex-col items-center px-6 pb-12 pt-4">
         <div className="w-full max-w-[600px] space-y-8">
           {/* Header Section */}
           <div className="space-y-2">
@@ -185,7 +206,7 @@ const Register = () => {
               <Button
                 type="submit"
                 className="w-full py-7 text-lg shadow-xl shadow-blue-600/20"
-                loading={isLoading}
+                loading={handleRegisterMutation.isPending}
               >
                 Create Account <ArrowRight className="ml-2" size={20} />
               </Button>

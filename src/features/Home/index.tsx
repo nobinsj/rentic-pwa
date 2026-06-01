@@ -1,13 +1,61 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { CarCard } from "./CarCard";
-
-const BRANDS = ["All", "Nexa", "Tata", "Mahindra", "Hyundai", "Toyota"];
+import { useQuery } from "@tanstack/react-query";
+import { getCarListForBooking } from "@/services/user.api";
+import { useNavigate } from "react-router";
+import type { CarListT } from "@/types";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("All");
+
+  const { data, isLoading, isError } = useQuery<CarListT[], Error>({
+    queryKey: ["cars"],
+    queryFn: getCarListForBooking,
+  });
+
+  const dynamicBrands = useMemo(() => {
+    if (!data) return ["All"];
+    const uniqueBrands = [...new Set(data.map((car) => car.brand))].filter(
+      Boolean,
+    );
+    return ["All", ...uniqueBrands];
+  }, [data]);
+
+  // 2. Filter logic
+  const filteredCars = useMemo(() => {
+    if (!data) return [];
+
+    return data.filter((car) => {
+      const matchesBrand =
+        selectedBrand === "All" || car.brand === selectedBrand;
+      const matchesSearch =
+        car.name?.toLowerCase().includes(search.toLowerCase()) ||
+        car.brand?.toLowerCase().includes(search.toLowerCase());
+
+      return matchesBrand && matchesSearch;
+    });
+  }, [data, search, selectedBrand]);
+
+  const handleNavigateBooking = (carId: string) => {
+    navigate(`/booking/${carId}`);
+  };
+
+  if (isLoading)
+    return (
+      <p className="p-10 text-center text-gray-500 font-medium">
+        Loading cars...
+      </p>
+    );
+  if (isError)
+    return (
+      <p className="p-10 text-center text-red-500 font-medium">
+        Error loading cars
+      </p>
+    );
 
   return (
     <div className="space-y-6">
@@ -27,9 +75,9 @@ const Home = () => {
         </button>
       </div>
 
-      {/* Horizontal Brand Chips */}
+      {/* Horizontal Brand Chips - Now mapping from dynamicBrands */}
       <div className="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
-        {BRANDS.map((brand) => (
+        {dynamicBrands.map((brand) => (
           <button
             key={brand}
             onClick={() => setSelectedBrand(brand)}
@@ -48,37 +96,26 @@ const Home = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">
-            Available Cars
+            Available Cars ({filteredCars.length})
           </h2>
-          <button className="text-xs font-bold text-blue-600">View All</button>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {/* Mapping through your data here */}
-          <CarCard
-            car={{
-              brand: "Nexa",
-              name: "Fronx",
-              fuelType: "Petrol",
-              transmission: "Manual",
-              pricePerDay: 1600,
-              status: "available",
-              image:
-                "https://www.popularmaruti.com/blog/wp-content/uploads/2023/07/Maruti-Suzuki-FRONX.jpg",
-            }}
-          />
-          <CarCard
-            car={{
-              brand: "Nexa",
-              name: "Fronx",
-              fuelType: "Petrol",
-              transmission: "Manual",
-              pricePerDay: 1600,
-              status: "available",
-              image:
-                "https://www.popularmaruti.com/blog/wp-content/uploads/2023/07/Maruti-Suzuki-FRONX.jpg",
-            }}
-          />
+          {filteredCars.length > 0 ? (
+            filteredCars.map((item) => (
+              <CarCard
+                key={item.id || item.id}
+                car={item}
+                onBookClick={handleNavigateBooking}
+              />
+            ))
+          ) : (
+            <div className="col-span-full py-10 text-center">
+              <p className="text-gray-500 font-medium">
+                No cars found matching your criteria.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
