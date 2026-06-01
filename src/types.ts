@@ -16,17 +16,79 @@ export interface CarProps {
   createdAt: Timestamp; // Firestore Timestamp
 }
 
+export type BookingStatusT =
+  | "REQUESTED"
+  | "CONFIRMED"
+  | "ONGOING"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "REJECTED";
+
+export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
+
+export type PaymentMethod = "CASH";
+
 export interface BookingProps {
-  id: string; // Unique Booking ID
-  carId: string; // Reference to the Car document
-  userId: string; // Reference to the User (you)
-  carName: string; // Denormalized for quick display
-  brand: string; // Denormalized for quick display
-  image: string; // Denormalized for quick display
-  startDate: Timestamp; // When the rental starts
-  endDate: Timestamp; // When the rental ends
-  totalPrice: number; // calculated (pricePerDay * days)
-  status: BookingStatus; // "Active" | "Completed" | "Cancelled"
-  paymentStatus: "paid" | "pending";
-  createdAt: Timestamp;
+  id: string;
+
+  // USER
+  userId: string;
+
+  // CAR
+  carId: string;
+  carName: string;
+  carImage: string;
+  carRatePerDay: number;
+
+  // BOOKING DATES (epoch milliseconds)
+  pickupDate: number;
+  returnDate: number;
+
+  totalDays: number;
+
+  // LOCATIONS
+  pickupLocation: string;
+  dropLocation: string;
+
+  // CUSTOMER DETAILS
+  driverAge: number;
+  phoneNumber: string;
+  notes?: string;
+
+  // DELIVERY
+  deliveryRequired: boolean;
+  deliveryCharge: number;
+
+  // PRICING
+  basePrice: number;
+  tax: number;
+  discount: number;
+  totalPrice: number;
+
+  // PAYMENT
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+
+  // BOOKING
+  bookingStatus: BookingStatusT;
+
+  // OPTIONAL
+  coupon?: string;
+  cancellationReason?: string;
+
+  // AUDIT
+  createdAt: number;
+  updatedAt: number;
 }
+
+export type CarListT = {
+  id: string;
+  image: string;
+  pricePerDay: string | number;
+  brand: string;
+  name: string;
+  fuelType: string;
+  transmission: string;
+  status: string;
+  businessName: string;
+};

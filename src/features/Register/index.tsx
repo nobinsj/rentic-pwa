@@ -66,7 +66,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-white dark:bg-gray-950">
+    <div className="h-screen bg-white dark:bg-gray-950 flex flex-col ">
       {/* Optional: Simple Top Navigation for PWA */}
       <div className="flex items-center justify-between px-6 py-4">
         <button
@@ -78,7 +78,7 @@ const Register = () => {
         <Car className="text-blue-600" size={24} />
       </div>
 
-      <div className="flex flex-1 flex-col items-center px-6 pb-12 pt-4">
+      <div className="flex flex-1 overflow-y-auto flex-col items-center px-6 pb-12 pt-4">
         <div className="w-full max-w-[600px] space-y-8">
           {/* Header Section */}
           <div className="space-y-2">

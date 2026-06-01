@@ -1,62 +1,102 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Calendar } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { BookingCard } from "./BookingCard";
+import { getMyBookings } from "@/services/user.api";
 import type { BookingProps } from "@/types";
-import { mockTimestamp } from "@/helpers/utils";
 
-const TABS = ["Active", "Completed", "Cancelled"];
-
-export const MOCK_BOOKINGS: BookingProps[] = [
-  {
-    id: "BK-9901",
-    carId: "car-123",
-    userId: "user-456",
-    carName: "Fronx",
-    brand: "Nexa",
-    image:
-      "https://www.popularmaruti.com/blog/wp-content/uploads/2023/07/Maruti-Suzuki-FRONX.jpg",
-    startDate: mockTimestamp("2026-03-28"),
-    endDate: mockTimestamp("2026-03-30"),
-    totalPrice: 3200,
-    status: "Active",
-    paymentStatus: "paid",
-    createdAt: mockTimestamp("2026-03-25"),
-  },
-  {
-    id: "BK-8822",
-    carId: "car-789",
-    userId: "user-456",
-    carName: "Nexon EV",
-    brand: "Tata",
-    image:
-      "https://imgd.aeplcdn.com/664x374/n/cw/ec/141125/nexon-ev-exterior-right-front-three-quarter-3.jpeg?isig=0",
-    startDate: mockTimestamp("2026-02-12"),
-    endDate: mockTimestamp("2026-02-15"),
-    totalPrice: 6600,
-    status: "Completed",
-    paymentStatus: "paid",
-    createdAt: mockTimestamp("2026-02-10"),
-  },
-];
+const TABS = ["ACTIVE", "COMPLETED", "CANCELLED"] as const;
 
 const Bookings = () => {
-  const [activeTab, setActiveTab] = useState("Active");
+  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("ACTIVE");
 
-  const filteredBookings = MOCK_BOOKINGS.filter((b) => b.status === activeTab);
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useQuery<BookingProps[]>({
+    queryKey: ["myBookings"],
+    queryFn: getMyBookings,
+  });
+
+  const filteredBookings = useMemo(() => {
+    return data.filter((booking) => {
+      const status = booking.bookingStatus;
+
+      if (activeTab === "ACTIVE") {
+        return (
+          status === "REQUESTED" ||
+          status === "CONFIRMED" ||
+          status === "ONGOING"
+        );
+      }
+
+      if (activeTab === "COMPLETED") {
+        return status === "COMPLETED";
+      }
+
+      if (activeTab === "CANCELLED") {
+        return status === "CANCELLED" || status === "REJECTED";
+      }
+
+      return false;
+    });
+  }, [activeTab, data]);
+
+  // LOADING
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col space-y-1">
+          <div className="h-7 w-40 animate-pulse rounded bg-gray-200 dark:bg-gray-800" />
+
+          <div className="h-4 w-64 animate-pulse rounded bg-gray-200 dark:bg-gray-800" />
+        </div>
+
+        <div className="space-y-4">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="h-40 animate-pulse rounded-3xl bg-gray-100 dark:bg-gray-900"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ERROR
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/20">
+          <Calendar size={32} className="text-red-400" />
+        </div>
+
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          Failed to load bookings
+        </h3>
+
+        <p className="mt-1 text-sm text-gray-500">Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
+      {/* HEADER */}
       <div className="flex flex-col space-y-1">
         <h1 className="text-2xl font-extrabold text-gray-900 dark:text-gray-100">
           My Bookings
         </h1>
+
         <p className="text-sm text-gray-500">
-          Track your rides and trip history
+          Track your rides and booking history
         </p>
       </div>
 
-      {/* Segmented Control (Tabs) */}
+      {/* TABS */}
       <div className="flex rounded-2xl bg-gray-100 p-1 dark:bg-gray-900">
         {TABS.map((tab) => (
           <button
@@ -74,7 +114,7 @@ const Bookings = () => {
         ))}
       </div>
 
-      {/* Bookings List */}
+      {/* LIST */}
       <div className="space-y-4">
         {filteredBookings.length > 0 ? (
           filteredBookings.map((booking) => (
@@ -88,7 +128,7 @@ const Bookings = () => {
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               No {activeTab} Bookings
             </h3>
-            <p className="max-w-[200px] text-sm text-gray-500">
+            <p className="max-w-[240px] text-sm text-gray-500">
               You don't have any bookings in this category yet.
             </p>
           </div>

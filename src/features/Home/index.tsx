@@ -4,20 +4,21 @@ import { Input } from "@/components/ui/input";
 import { CarCard } from "./CarCard";
 import { useQuery } from "@tanstack/react-query";
 import { getCarListForBooking } from "@/services/user.api";
+import { useNavigate } from "react-router";
+import type { CarListT } from "@/types";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("All");
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery<CarListT[], Error>({
     queryKey: ["cars"],
     queryFn: getCarListForBooking,
   });
 
-  // 1. Dynamically generate the brand list from the API data
   const dynamicBrands = useMemo(() => {
     if (!data) return ["All"];
-    // Extract unique brands and remove any null/undefined values
     const uniqueBrands = [...new Set(data.map((car) => car.brand))].filter(
       Boolean,
     );
@@ -38,6 +39,10 @@ const Home = () => {
       return matchesBrand && matchesSearch;
     });
   }, [data, search, selectedBrand]);
+
+  const handleNavigateBooking = (carId: string) => {
+    navigate(`/booking/${carId}`);
+  };
 
   if (isLoading)
     return (
@@ -98,7 +103,11 @@ const Home = () => {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {filteredCars.length > 0 ? (
             filteredCars.map((item) => (
-              <CarCard key={item.id || item._id} car={item} />
+              <CarCard
+                key={item.id || item.id}
+                car={item}
+                onBookClick={handleNavigateBooking}
+              />
             ))
           ) : (
             <div className="col-span-full py-10 text-center">

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ChevronLeft, Car, ShieldCheck, RefreshCw } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "react-toastify";

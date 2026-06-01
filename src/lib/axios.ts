@@ -35,7 +35,6 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     const isRefreshCall = originalRequest?.url?.includes("/v1/auth/refresh");
-    const isAuthCheckCall = originalRequest?.url?.includes("/me");
 
     // Never intercept the refresh endpoint — bail out immediately
     if (isRefreshCall) {
@@ -49,14 +48,8 @@ api.interceptors.response.use(
     }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // /me 401 just means "not logged in" — don't attempt refresh
-      if (isAuthCheckCall) {
-        return Promise.reject(error);
-      }
-
       originalRequest._retry = true;
 
-      // Already refreshing → queue this request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({

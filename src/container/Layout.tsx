@@ -4,7 +4,6 @@ import Footer from "./Footer";
 
 const Layout = () => {
   return (
-    /* h-[100dvh] prevents the layout from breaking on mobile browsers */
     <div className="flex h-[100dvh] w-full flex-col overflow-hidden bg-white dark:bg-gray-950">
       {/* Fixed Header */}
       <Header />
